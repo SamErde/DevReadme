@@ -26,7 +26,10 @@ jobs:
           git diff
           git config --global user.email "github-actions-bot@andrew6rant.github.io"
           git config --global user.name "Andrew6rant/GitHub-Actions-Bot"
-          git diff-index --quiet HEAD || git commit -m "Updated README"
-          if ($LASTEXITCODE -eq 0) {
+          git diff-index --quiet HEAD
+          if ($LASTEXITCODE -eq 1) {
+            git commit -m "Updated README"
             git push
+          } else {
+            Write-Host "No changes to commit"
           }

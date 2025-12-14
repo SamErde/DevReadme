@@ -368,7 +368,21 @@ function New-CacheBuilder {
     $data = if ($CommentSize -gt 0 -and $CommentSize -lt $data.Count) { $data[$CommentSize..($data.Count - 1)] } elseif ($CommentSize -ge $data.Count) { @() } else { $data }
     
     for ($index = 0; $index -lt $Edges.Count; $index++) {
+        # Ensure cache data has enough entries
+        if ($index -ge $data.Count) {
+            Write-Warning "Cache file has fewer entries than expected. Rebuilding cache."
+            Clear-FlushCache -Edges $Edges -Filename $filename -CommentSize $CommentSize
+            $data = Get-Content $filename
+            if ($CommentSize -gt 0 -and $CommentSize -lt $data.Count) { $data = $data[$CommentSize..($data.Count - 1)] }
+            elseif ($CommentSize -ge $data.Count) { $data = @() }
+        }
+        
         $parts = $data[$index] -split '\s+'
+        if ($parts.Count -lt 5) {
+            Write-Warning "Invalid cache line at index $index. Skipping."
+            continue
+        }
+        
         $repoHash = $parts[0]
         $commitCount = [int]$parts[1]
         
@@ -445,6 +459,10 @@ function Add-Archive {
     
     foreach ($line in $data) {
         $parts = $line -split '\s+'
+        if ($parts.Count -lt 5) {
+            Write-Warning "Invalid archive line format. Skipping."
+            continue
+        }
         $repoHash = $parts[0]
         $totalCommits = $parts[1]
         $myCommits = $parts[2]
@@ -456,7 +474,12 @@ function Add-Archive {
     }
     
     $lastLineParts = $oldData[-1] -split '\s+'
-    $lastValue = $lastLineParts[4] -replace ',$', ''
+    if ($lastLineParts.Count -lt 5) {
+        Write-Warning "Invalid last line format in archive. Using 0 for additional commits."
+        $lastValue = 0
+    } else {
+        $lastValue = $lastLineParts[4] -replace ',$', ''
+    }
     $addedCommits += [int]$lastValue
     
     return @($addedLoc, $deletedLoc, ($addedLoc - $deletedLoc), $addedCommits, $contributedRepos)
@@ -573,6 +596,10 @@ function Get-CommitCounter {
     
     foreach ($line in $data) {
         $parts = $line -split '\s+'
+        if ($parts.Count -lt 3) {
+            Write-Warning "Invalid cache line format. Skipping."
+            continue
+        }
         $totalCommits += [int]$parts[2]
     }
     
