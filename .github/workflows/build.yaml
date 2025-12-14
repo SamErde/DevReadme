@@ -27,7 +27,8 @@ jobs:
           git config --global user.email "github-actions-bot@andrew6rant.github.io"
           git config --global user.name "Andrew6rant/GitHub-Actions-Bot"
           git commit -m "Updated README" -a
-          if ($LASTEXITCODE -ne 0) {
+          if ($LASTEXITCODE -eq 0) {
+            git push
+          } else {
             Write-Host "No changes to commit"
           }
-          git push
