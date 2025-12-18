@@ -25,8 +25,8 @@ jobs:
         run: |
           git add .
           git diff
-          git config --global user.email "github-actions-bot@andrew6rant.github.io"
-          git config --global user.name "Andrew6rant/GitHub-Actions-Bot"
+          git config --global user.email "github-actions-bot@samerde.github.io"
+          git config --global user.name "SamErde/GitHub-Actions-Bot"
           git diff-index --quiet HEAD
           if ($LASTEXITCODE -eq 1) {
             git commit -m "Updated README"
