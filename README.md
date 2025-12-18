@@ -4,3 +4,5 @@
     <img alt="Sam Erde's GitHub Profile README" src="https://raw.githubusercontent.com/SamErde/DevReadme/main/light_mode.svg">
   </picture>
 </a>
+
+This is an experiment. Full credit goes to @Andrew6rant for original creation (as far as I can tell) and @jorgeasaurus for converting the Python to PowerShell.
